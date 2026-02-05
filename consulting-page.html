@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rüdiger Consulting | Stratégie Business pour Startups & PME</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- GSAP for Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1E293B', // Slate 900
+                        secondary: '#10B981', // Emerald 500
+                        accent: '#F59E0B', // Amber 500
+                        surface: '#F8FAFC',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        header: ['Poppins', 'sans-serif'],
+                    },
+                    backgroundImage: {
+                        'noise': "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuODUiIG51bU9jdGF2ZXM9IjE1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wMyIvPjwvc3ZnPg==')",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FFFFFF;
+            overflow-x: hidden;
+        }
+        /* Custom Scrollbar */
+        
+         ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+         ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 5px;
+        }
+        
+         ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Noise overlay for texture */
+        
+        .noise-bg {
+            position: relative;
+        }
+        
+        .noise-bg::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MTIiIGhlaWdodD0iNTEyIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuODUiIG51bU9jdGF2ZXM9IjE1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PC9maWx0ZXI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsdGVyPSJ1cmwoI25vaXNlKSIgb3BhY2l0eT0iMC4wNSIvPjwvc3ZnPg==");
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* Text Reveal Animation */
+        
+        .reveal-text {
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
+        }
+        /* Card Hover Effects */
+        
+        .service-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px -15px rgba(16, 185, 129, 0.2);
+        }
+        /* Gradient Text */
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #1E293B 0%, #475569 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        /* Loader */
+        
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        /* Mobile Menu */
+        
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+    </style>
+    <base target="_blank">
+</head>
+
+<body class="font-sans text-slate-600 antialiased selection:bg-secondary selection:text-white">
+
+    <!-- Loader -->
+    <div id="loader">
+        <div class="flex flex-col items-center">
+            <div class="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin mb-4"></div>
+            <div class="font-header font-bold text-primary text-xl">RÜDIGER<span class="text-secondary">CONSULTING</span></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header id="header" class="fixed w-full top-0 z-50 transition-all duration-300 bg-white/80 backdrop-blur-md border-b border-slate-100">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="text-2xl font-header font-bold text-primary tracking-tight flex items-center gap-2 group">
+                <span class="w-3 h-3 bg-secondary rounded-full group-hover:scale-150 transition-transform duration-300"></span> RÜDIGER<span class="text-secondary">CONSULTING</span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <nav class="hidden md:flex items-center gap-8">
+                <a href="#services" class="text-sm font-medium hover:text-secondary transition-colors">Services</a>
+                <a href="#temoignages" class="text-sm font-medium hover:text-secondary transition-colors">Témoignages</a>
+                <a href="#contact" class="px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-full hover:bg-secondary transition-colors duration-300 shadow-lg shadow-primary/20">
+                    Contact
+                </a>
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button id="menuBtn" class="md:hidden text-primary focus:outline-none">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-0 z-40 bg-white flex flex-col justify-center items-center gap-8 md:hidden">
+        <button id="closeMenu" class="absolute top-6 right-6 text-primary">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        <a href="#services" class="text-2xl font-header font-bold text-primary mobile-link">Services</a>
+        <a href="#temoignages" class="text-2xl font-header font-bold text-primary mobile-link">Témoignages</a>
+        <a href="#contact" class="text-2xl font-header font-bold text-secondary mobile-link">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden noise-bg">
+        <!-- Background Decorative Elements -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-surface to-transparent opacity-50 -z-10"></div>
+        <div class="absolute -top-24 -right-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl -z-10"></div>
+
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
+
+                <!-- Left Content (60%) -->
+                <div class="w-full lg:w-3/5 z-10">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-secondary/10 text-secondary text-xs font-bold uppercase tracking-wider mb-6 reveal-item">
+                        <span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span> Consultant Stratégie Business
+                    </div>
+
+                    <h1 class="text-5xl lg:text-6xl xl:text-7xl font-header font-bold text-primary leading-[1.1] mb-6 reveal-text">
+                        Doublez votre <br>
+                        <span class="text-gradient">croissance</span> en <br>
+                        <span class="relative inline-block">
+                            <span class="relative z-10">90 jours</span>
+                        <svg class="absolute -bottom-2 left-0 w-full h-3 text-accent/40 -z-0" viewBox="0 0 200 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.00025 6.99997C25.7501 5.49998 146.25 -2.50003 197.75 6.99997" stroke="#F59E0B" stroke-width="3"/></svg>
+                        </span>
+                    </h1>
+
+                    <p class="text-lg text-slate-600 mb-8 max-w-xl leading-relaxed reveal-item">
+                        Je vous aide à identifier les leviers cachés de votre business et à exécuter un plan d'action concret, sans théorie inutile.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-4 mb-12 reveal-item">
+                        <a href="#contact" class="px-8 py-4 bg-secondary text-white font-bold rounded-lg shadow-lg shadow-secondary/30 hover:bg-emerald-600 hover:scale-105 transition-all duration-300 text-center">
+                            Réserver un audit gratuit
+                        </a>
+                        <a href="#services" class="px-8 py-4 bg-white text-primary border border-slate-200 font-bold rounded-lg hover:border-secondary hover:text-secondary transition-all duration-300 text-center flex items-center justify-center gap-2 group">
+                            Voir les services
+                            <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-6 border-t border-slate-200 pt-8 reveal-item">
+                        <div>
+                            <div class="text-3xl font-header font-bold text-primary">50+</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide mt-1">Entreprises</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-header font-bold text-secondary">+120%</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide mt-1">Croissance</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-header font-bold text-primary">90j</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide mt-1">Résultats</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Image (40%) -->
+                <div class="w-full lg:w-2/5 relative reveal-item">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl shadow-slate-200/50 transform lg:rotate-2 hover:rotate-0 transition-transform duration-500">
+                        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Consultant stratégie" class="w-full h-auto object-cover">
+
+                        <!-- Floating Badge -->
+                        <div class="absolute bottom-6 left-6 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg border border-slate-100 flex items-center gap-3 animate-bounce-slow">
+                            <div class="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center text-accent">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                            </div>
+                            <div>
+                                <div class="text-xs text-slate-500 font-semibold uppercase">Croissance</div>
+                                <div class="text-sm font-bold text-primary">En progression</div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Decorative dots -->
+                    <div class="absolute -bottom-10 -right-10 w-40 h-40 opacity-20">
+                        <svg width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg"><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="2" fill="#1E293B"/></pattern><rect width="100%" height="100%" fill="url(#dots)"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Problèmes -->
+    <section id="problemes" class="py-20 bg-surface relative overflow-hidden">
+        <div class="container mx-auto px-6">
+            <div class="text-center max-w-2xl mx-auto mb-16 section-header">
+                <h2 class="text-sm font-bold text-secondary uppercase tracking-widest mb-3">Les blocages</h2>
+                <h3 class="text-4xl font-header font-bold text-primary">Vous êtes bloqué ?</h3>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:border-secondary/50 transition-colors duration-300 group problem-card">
+                    <div class="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        📉
+                    </div>
+                    <h4 class="text-xl font-header font-bold text-primary mb-3">Croissance stagnante</h4>
+                    <p class="text-slate-600 leading-relaxed">
+                        Vous tournez en rond, le CA ne décolle pas malgré vos efforts. Vous sentez que vous manquez d'un levier extérieur.
+                    </p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:border-secondary/50 transition-colors duration-300 group problem-card">
+                    <div class="w-16 h-16 bg-amber-50 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        🎯
+                    </div>
+                    <h4 class="text-xl font-header font-bold text-primary mb-3">Stratégie floue</h4>
+                    <p class="text-slate-600 leading-relaxed">
+                        Trop d'idées, aucune priorité claire. Vous passez du temps à réfléchir mais peu à agir concrètement.
+                    </p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-lg shadow-slate-200/50 border border-slate-100 hover:border-secondary/50 transition-colors duration-300 group problem-card">
+                    <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-4xl mb-6 group-hover:scale-110 transition-transform duration-300">
+                        ⚡
+                    </div>
+                    <h4 class="text-xl font-header font-bold text-primary mb-3">Exécution chaotique</h4>
+                    <p class="text-slate-600 leading-relaxed">
+                        Votre équipe ne sait pas quoi faire en priorité. Manque de focus, manque de process, manque de résultats.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Services -->
+    <section id="services" class="py-24 bg-white relative">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 section-header">
+                <div class="max-w-2xl">
+                    <h2 class="text-sm font-bold text-secondary uppercase tracking-widest mb-3">Solutions</h2>
+                    <h3 class="text-4xl md:text-5xl font-header font-bold text-primary">Des packs adaptés<br>à vos besoins</h3>
+                </div>
+                <p class="text-slate-500 mt-4 md:mt-0 md:text-right max-w-xs">
+                    Choisissez l'accompagnement qui correspond à votre niveau d'urgence et de transformation.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8 items-start">
+
+                <!-- Pack 1 -->
+                <div class="service-card bg-white rounded-2xl border border-slate-200 overflow-hidden relative group">
+                    <div class="h-2 bg-slate-200 w-full group-hover:bg-secondary transition-colors duration-300"></div>
+                    <div class="p-8">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Démarrage</div>
+                        <h4 class="text-2xl font-header font-bold text-primary mb-4">Audit Express</h4>
+                        <div class="text-4xl font-header font-bold text-primary mb-6">500€</div>
+
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-600">1 session de 2h en visio</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-600">Document stratégique 10 pages</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-600">Identification des 3 quick wins</span>
+                            </li>
+                        </ul>
+
+                        <button class="w-full py-3 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-colors duration-300">
+                            Réserver
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pack 2 (Featured) -->
+                <div class="service-card bg-primary rounded-2xl border border-primary overflow-hidden relative transform md:-translate-y-4 shadow-2xl shadow-primary/20">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-secondary"></div>
+                    <div class="absolute top-4 right-4 bg-accent text-white text-xs font-bold px-3 py-1 rounded-full">POPULAIRE</div>
+                    <div class="p-8 text-white">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Transformation</div>
+                        <h4 class="text-2xl font-header font-bold mb-4">Plan 90 Jours</h4>
+                        <div class="text-4xl font-header font-bold mb-6">2000€</div>
+
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-300">1 mois d'accompagnement intensif</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-300">Roadmap détaillée & 4 sessions</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-300">Accès Slack pour questions</span>
+                            </li>
+                        </ul>
+
+                        <button class="w-full py-3 bg-secondary text-white font-bold rounded-lg hover:bg-emerald-400 transition-colors duration-300 shadow-lg shadow-secondary/20">
+                            Choisir ce plan
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pack 3 -->
+                <div class="service-card bg-white rounded-2xl border border-slate-200 overflow-hidden relative group">
+                    <div class="h-2 bg-slate-200 w-full group-hover:bg-secondary transition-colors duration-300"></div>
+                    <div class="p-8">
+                        <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Excellence</div>
+                        <h4 class="text-2xl font-header font-bold text-primary mb-4">Sparring Partner</h4>
+                        <div class="text-4xl font-header font-bold text-primary mb-6">5000€</div>
+
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-600">3 mois d'accompagnement continu</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-600">Accès direct & réponse 24h</span>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <svg class="w-5 h-5 text-secondary mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span class="text-slate-600">Workshops stratégiques illimités</span>
+                            </li>
+                        </ul>
+
+                        <button class="w-full py-3 border-2 border-primary text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-colors duration-300">
+                            Réserver
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section Témoignages -->
+    <section id="temoignages" class="py-24 bg-surface relative overflow-hidden">
+        <!-- Decorative background -->
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none">
+            <div class="absolute -top-24 -left-24 w-96 h-96 bg-secondary/5 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-0 right-0 w-64 h-64 bg-accent/5 rounded-full blur-3xl"></div>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="text-center max-w-2xl mx-auto mb-16 section-header">
+                <h2 class="text-sm font-bold text-secondary uppercase tracking-widest mb-3">Résultats</h2>
+                <h3 class="text-4xl font-header font-bold text-primary">Ils ont transformé<br>leur business</h3>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+
+                <!-- Témoignage 1 -->
+                <div class="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-100 relative testimonial-card">
+                    <div class="absolute top-8 right-8 text-6xl text-secondary/10 font-serif">"</div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Marie Dubois" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md">
+                        <div>
+                            <div class="font-header font-bold text-primary">Marie Dubois</div>
+                            <div class="text-sm text-slate-500">CEO TechStart</div>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 text-lg leading-relaxed italic">
+                        "En 60 jours, on a identifié notre vrai problème et triplé notre pipeline. Rüdiger va droit au but, sans langue de bois. Une vraie valeur ajoutée."
+                    </p>
+                    <div class="mt-6 flex gap-1">
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                </div>
+
+                <!-- Témoignage 2 -->
+                <div class="bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-slate-100 relative testimonial-card mt-8 md:mt-0">
+                    <div class="absolute top-8 right-8 text-6xl text-secondary/10 font-serif">"</div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Ahmed Sy" class="w-14 h-14 rounded-full object-cover border-2 border-white shadow-md">
+                        <div>
+                            <div class="font-header font-bold text-primary">Ahmed Sy</div>
+                            <div class="text-sm text-slate-500">Fondateur LogiPro</div>
+                        </div>
+                    </div>
+                    <p class="text-slate-700 text-lg leading-relaxed italic">
+                        "Fini les stratégies PowerPoint qui dorment dans un tiroir. Avec Rüdiger, on exécute et on voit les résultats immédiatement. Efficacité redoutable."
+                    </p>
+                    <div class="mt-6 flex gap-1">
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        <svg class="w-5 h-5 text-accent" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Section CTA / Contact -->
+    <section id="contact" class="py-24 bg-primary relative overflow-hidden">
+        <!-- Background Pattern -->
+        <div class="absolute inset-0 opacity-10">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(#grid)"/></svg>
+        </div>
+
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col lg:flex-row gap-16 items-start">
+                <div class="w-full lg:w-2/5 text-white section-header">
+                    <h2 class="text-sm font-bold text-secondary uppercase tracking-widest mb-4">Contact</h2>
+                    <h3 class="text-4xl md:text-5xl font-header font-bold mb-6">Prêt à débloquer<br>votre croissance ?</h3>
+                    <p class="text-slate-300 text-lg mb-8 leading-relaxed">
+                        Réservez un audit gratuit de 30min. On analyse votre situation actuelle et je vous dis immédiatement si je peux vous aider à atteindre vos objectifs.
+                    </p>
+
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 bg-white/10 rounded-full flex items-center justify-center">
+                            <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs text-slate-400 uppercase">Email direct</div>
+                            <div class="font-bold text-lg">contact@rudiger.com</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-3/5 bg-white rounded-2xl p-1 shadow-2xl reveal-item">
+                    <div class="bg-surface rounded-xl p-8 md:p-10 h-full">
+                        <div class="text-center mb-6">
+                            <h4 class="font-header font-bold text-2xl text-primary">Formulaire de contact</h4>
+                            <p class="text-slate-500 text-sm">Remplissez ce formulaire pour demander votre audit gratuit.</p>
+                        </div>
+
+                        <iframe data-tally-src="https://tally.so/embed/obG8xM?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="408" frameborder="0" marginheight="0" marginwidth="0" title="Discutons de votre stratégie"></iframe>
+                        <script>
+                            var d = document,
+                                w = "https://tally.so/widgets/embed.js",
+                                v = function() {
+                                    "undefined" != typeof Tally ? Tally.loadEmbeds() : d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e) {
+                                        e.src = e.dataset.tallySrc
+                                    }))
+                                };
+                            if ("undefined" != typeof Tally) v();
+                            else if (d.querySelector('script[src="' + w + '"]') == null) {
+                                var s = d.createElement("script");
+                                s.src = w, s.onload = v, s.onerror = v, d.body.appendChild(s);
+                            }
+                        </script>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 border-t border-slate-800">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <div class="flex items-center gap-2">
+                    <span class="w-2 h-2 bg-secondary rounded-full"></span>
+                    <span class="text-white font-header font-bold text-xl">RÜDIGER<span class="text-secondary">CONSULTING</span></span>
+                </div>
+
+                <div class="flex gap-6 text-sm">
+                    <a href="#" class="hover:text-white transition-colors">Mentions légales</a>
+                    <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+                    <a href="mailto:contact@rudiger.com" class="hover:text-white transition-colors">Email</a>
+                </div>
+
+                <div class="text-xs text-slate-600">
+                    © 2026 Rüdiger Consulting. Tous droits réservés.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script>
+        // Remove loader when page loads
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => {
+                loader.style.display = 'none';
+            }, 500);
+
+            // Initialize animations after load
+            initAnimations();
+        });
+
+        // Mobile Menu Logic
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenu = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        function toggleMenu() {
+            mobileMenu.classList.toggle('open');
+        }
+
+        menuBtn.addEventListener('click', toggleMenu);
+        closeMenu.addEventListener('click', toggleMenu);
+
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', toggleMenu);
+        });
+
+        // GSAP Animations
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Hero Reveal
+            gsap.from(".reveal-item", {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out",
+                delay: 0.5
+            });
+
+            // Section Headers
+            gsap.utils.toArray('.section-header').forEach(header => {
+                gsap.from(header.children, {
+                    scrollTrigger: {
+                        trigger: header,
+                        start: "top 80%",
+                    },
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: "power2.out"
+                });
+            });
+
+            // Problem Cards
+            gsap.utils.toArray('.problem-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.6,
+                    delay: i * 0.1,
+                    ease: "back.out(1.7)"
+                });
+            });
+
+            // Service Cards
+            gsap.utils.toArray('.service-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                    },
+                    y: 50,
+                    opacity: 0,
+                    duration: 0.8,
+                    delay: i * 0.15,
+                    ease: "power3.out"
+                });
+            });
+
+            // Testimonials
+            gsap.utils.toArray('.testimonial-card').forEach((card, i) => {
+                gsap.from(card, {
+                    scrollTrigger: {
+                        trigger: card,
+                        start: "top 85%",
+                    },
+                    x: i % 2 === 0 ? -30 : 30,
+                    opacity: 0,
+                    duration: 0.8,
+                    ease: "power2.out"
+                });
+            });
+        }
+
+        // Smooth Scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header Scroll Effect
+        let lastScroll = 0;
+        const header = document.getElementById('header');
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+
+            if (currentScroll > 100) {
+                header.classList.add('shadow-md');
+            } else {
+                header.classList.remove('shadow-md');
+            }
+
+            lastScroll = currentScroll;
+        });
+    </script>
+</body>
+
+</html>
